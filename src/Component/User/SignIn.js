@@ -1,33 +1,70 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../AuthProvider/AuthProvider';
+
 
 const SignIn = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const from = location.state?.from?.pathname || '/';
+    const { signIn, googleSignIn } = useContext(AuthContext)
+    const { register, handleSubmit, formState: { errors } } = useForm();
+    const handleLogin = data => {
+        const email = data.email;
+        const password = data.password;
+
+        signIn(email, password)
+            .then(result => {
+                const user = result.user;
+                toast.success('You are login successfully')
+                navigate(from, { replace: true })
+
+            })
+            .catch(err => console.log(err))
+
+    }
+    const handleGoogleSignin = () => {
+        googleSignIn()
+            .then(result => {
+                const user = result.user;
+                const email = user.email;
+
+                const userDetails = { email }
+                fetch(`http://localhost:8000/api/user/add`, {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify(userDetails)
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log(data)
+                    })
+                navigate(from, { replace: true })
+                toast.success('your google sing up successfully')
+            })
+            .catch(e => console.log(e))
+    }
     return (
         <section class="bg-white dark:bg-gray-900">
             <div class="container flex items-center justify-center min-h-screen px-6 mx-auto">
-                <form class="w-full max-w-md">
-                    <img class="w-auto h-7 sm:h-8" src="https://merakiui.com/images/logo.svg" alt="" />
-
-                    <h1 class="mt-3 text-2xl font-semibold text-gray-800 capitalize sm:text-3xl dark:text-white">sign In</h1>
-
-                    <div class="relative flex items-center mt-8">
-                        <span class="absolute">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mx-3 text-gray-300 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
-                        </span>
-
-                        <input type="email" class="block w-full py-3 text-gray-700 bg-white border rounded-lg px-11 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="Email address" />
+                <form onSubmit={handleSubmit(handleLogin)} class="w-full max-w-md">
+                    <h1 class="mt-3 text-2xl text-center font-semibold text-gray-800 capitalize sm:text-3xl dark:text-white">sign In</h1>
+                    <div className="mt-4">
+                        <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200" htmlFor="loggingPassword">Email</label>
+                        <input {...register('email', { required: 'Email must be required' })} id="loggingemail" className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="email" />
+                        {errors.email && <p className='text-red-500'>{errors.email?.message}</p>}
+                    </div>
+                    <div className="mt-4">
+                        <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200" htmlFor="loggingPassword">Password</label>
+                        <input {...register('password', { required: 'Password required must', minLength: { value: 6, message: 'password must be 6 characters or longer' } })} id="loggingPassword" className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="password" />
+                        {errors.password && <p className='text-red-500'>{errors.password?.message}</p>}
                     </div>
 
-                    <div class="relative flex items-center mt-4">
-                        <span class="absolute">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mx-3 text-gray-300 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                        </span>
 
-                        <input type="password" class="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="Password" />
-                    </div>
 
                     <div class="mt-6">
                         <button class="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
@@ -36,7 +73,7 @@ const SignIn = () => {
 
                         <p class="mt-4 text-center text-gray-600 dark:text-gray-400">or sign in with</p>
 
-                        <a href="#" class="flex items-center justify-center px-6 py-3 mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        <Link onClick={handleGoogleSignin} class="flex items-center justify-center px-6 py-3 mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
                             <svg class="w-6 h-6 mx-2" viewBox="0 0 40 40">
                                 <path d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.045 27.2142 24.3525 30 20 30C14.4775 30 10 25.5225 10 20C10 14.4775 14.4775 9.99999 20 9.99999C22.5492 9.99999 24.8683 10.9617 26.6342 12.5325L31.3483 7.81833C28.3717 5.04416 24.39 3.33333 20 3.33333C10.7958 3.33333 3.33335 10.7958 3.33335 20C3.33335 29.2042 10.7958 36.6667 20 36.6667C29.2042 36.6667 36.6667 29.2042 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z" fill="#FFC107" />
                                 <path d="M5.25497 12.2425L10.7308 16.2583C12.2125 12.59 15.8008 9.99999 20 9.99999C22.5491 9.99999 24.8683 10.9617 26.6341 12.5325L31.3483 7.81833C28.3716 5.04416 24.39 3.33333 20 3.33333C13.5983 3.33333 8.04663 6.94749 5.25497 12.2425Z" fill="#FF3D00" />
@@ -45,12 +82,12 @@ const SignIn = () => {
                             </svg>
 
                             <span class="mx-2">Sign in with Google</span>
-                        </a>
+                        </Link>
 
                         <div class="mt-6 text-center ">
-                            <a href="#" class="text-sm text-blue-500 hover:underline dark:text-blue-400">
+                            <Link to={'/signup'} class="text-sm font-medium text-primary hover:underline">
                                 Don’t have an account yet? Sign up
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </form>

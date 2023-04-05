@@ -29,11 +29,10 @@ const ExtraSection = () => {
                 </div>
                 <div class="flex flex-col items-center  w-full lg:flex-row lg:w-1/2">
                     <div class="max-w-lg  lg:order-2">
-                        <p>Get more done</p>
+                        <p>Clear your mind</p>
                         <h1 class="text-3xl font-semibold tracking-wide text-gray-800 dark:text-white lg:text-4xl">Add your tasks.
-                            Organize your life.
-                            Achieve more every day.</h1>
-                        <p class="mt-4 text-gray-600 dark:text-gray-300">Add tasks like “Read work emails every day at 10am” to fill your to-do list in seconds using Todoist’s powerful natural language recognition and recurring dates.</p>
+                            Reach that mental clarity you’ve been longing for.</h1>
+                        <p class="mt-4 text-gray-600 dark:text-gray-300">Your to-do lists are automatically sorted into Today, Upcoming and custom Filter views to help you focus on your most important things.</p>
 
                     </div>
                 </div>
