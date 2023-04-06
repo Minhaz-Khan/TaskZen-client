@@ -12,13 +12,6 @@ const Register = () => {
     const from = location.state?.from?.pathname || '/';
     const imageHostKey = process.env.REACT_APP_imageKey;
     const { register, handleSubmit, formState: { errors } } = useForm();
-
-    // const token = useToken(userEmail);
-    // useEffect(() => {
-    //     if (token) {
-    //         
-    //     }
-    // }, [token, navigate, from])
     const handleSignUp = data => {
         const name = data.name;
         const email = data.email;
