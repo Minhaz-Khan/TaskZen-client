@@ -13,16 +13,17 @@ import Task from './Task';
 
 const Dashboard = () => {
     const { user: currentUser } = useContext(AuthContext)
-    let [open, setOpen] = useState(false)
+    const [open, setOpen] = useState(false)
     const cancelButtonRef = useRef(null)
     const [value, onChange] = useState(new Date());
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
 
+
     const { data: allTask, isLoading, refetch } = useQuery({
         queryKey: ['todos', currentUser?.email],
         queryFn: async () => {
-            const res = await fetch(`http://localhost:8000/api/todos?email=${currentUser?.email}`)
+            const res = await fetch(`https://taskzen.onrender.com/api/todos?email=${currentUser?.email}`)
             const data = await res.json()
             return data;
         }
@@ -33,7 +34,7 @@ const Dashboard = () => {
         const description = data.details;
         const user = currentUser.email
         const task = { title, description, due: value, user }
-        fetch(`http://localhost:8000/api/todo/add`, {
+        fetch(`https://taskzen.onrender.com/api/todo/add`, {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -42,11 +43,10 @@ const Dashboard = () => {
         })
             .then(res => res.json())
             .then(data => {
-                if (data === 'todo Added Successfully!') {
-                    toast.success('Your Task added')
-                    reset()
 
-                }
+                toast.success(data.message)
+                reset()
+                refetch()
             })
         setOpen(false)
 
@@ -58,8 +58,8 @@ const Dashboard = () => {
                 <button onClick={() => setOpen(true)} className=" px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-primary rounded-lg hover:bg-secondary focus:outline-none focus:ring focus:ring-secondary focus:ring-opacity-50">Add Task</button>
             </div>
 
-            <div className='space-y-3 mt-16'>
-                {allTask.map((task, i) => <Task key={task._id} task={task} refetch={refetch} i={i}></Task>)}
+            <div className='space-y-5 my-16'>
+                {allTask?.map((task, i) => <Task key={task._id} task={task} refetch={refetch} i={i}></Task>)}
             </div>
 
 
@@ -90,20 +90,23 @@ const Dashboard = () => {
                                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                             >
-                                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 ">
                                     <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                                         <div className="sm:flex sm:items-start">
+
                                             {/* <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
                                                 <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                                             </div> */}
                                             <div className="mt-3 text-center  sm:mt-0 sm:text-left">
-
+                                                <h3 className='text-center font-semibold text-lg '>Add New Task</h3>
+                                                <p className='font-semibold'>Title</p>
                                                 <input {...register('title', { required: 'Title must be required' })} type="text" placeholder='Task Name' className='w-full border-2 rounded py-2 pl-2 border-slate-300' />
                                                 {errors.title && <p className='text-red-500'>{errors.title?.message}</p>}
-                                                <div className="mt-2">
-                                                    <textarea {...register('details', { required: 'Title must be required' })} cols='60' rows="6" placeholder='Description' className='border-2 rounded py-2 pl-2 border-slate-300'></textarea>
+                                                <p className='font-semibold mt-2'>Descriptions</p>
+                                                <div className="">
+                                                    <textarea {...register('details', { required: 'Title must be required' })} cols='40' rows="6" placeholder='Description' className='border-2 rounded py-2 pl-2 border-slate-300'></textarea>
                                                 </div>
-                                                <p>Set time</p>
+                                                <p className='font-semibold'>Set time</p>
                                                 <DateTimePicker onChange={onChange} value={value} />
                                             </div>
                                         </div>

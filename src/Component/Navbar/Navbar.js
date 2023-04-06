@@ -47,12 +47,9 @@ const Navbar = () => {
                                 <>
                                     <NavLink className={({ isActive }) => isActive ? 'text-secondary md:mx-4 md:my-0 my-2 text-lg font-medium' : "my-2 text-lg font-medium text-gray-800 transition-colors duration-300 transform dark:text-gray-200 hover:text-primary  md:mx-4 md:my-0"} to={'/dashboard'}>Dashboard</NavLink>
                                     <NavLink onClick={handleLogOut} className="my-2 text-lg font-medium  transition-colors duration-300 transform text-gray-800 hover:text-secondary  md:mx-4 md:my-0" >Log Out</NavLink></> :
-                                <>
-                                    <NavLink className={({ isActive }) => isActive ? 'text-secondary md:mx-4 md:my-0 my-2 text-lg font-medium' : "my-2 text-lg font-medium  transition-colors duration-300 transform text-gray-800 hover:text-primary  md:mx-4 md:my-0"} to={'/login'}>Login</NavLink>
-                                    <Link className="block px-5 py-2 mt-4 text-sm text-center text-white capitalize bg-secondary rounded-lg lg:mt-0 hover:bg-secondary lg:w-auto" href="#">
-                                        Get started
-                                    </Link>
-                                </>
+                                <NavLink className={({ isActive }) => isActive ? 'text-secondary md:mx-4 md:my-0 my-2 text-lg font-medium' : "my-2 text-lg font-medium  transition-colors duration-300 transform text-gray-800 hover:text-primary  md:mx-4 md:my-0"} to={'/login'}>Login</NavLink>
+
+
                         }
 
                     </div>
